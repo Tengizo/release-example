@@ -50,7 +50,7 @@ jobs:
           BODY="{\"labels\": [$MATCHED_LABELS]}"
           echo "$BODY"
           echo "label_body=$BODY" >> $GITHUB_OUTPUT
-          lb= "${{ steps.vars.outputs.label_body }}"
+          lb="${{ steps.vars.outputs.label_body }}"
           echo "$lb"
       - uses: octokit/request-action@v2.x
         id: add_pr_label
