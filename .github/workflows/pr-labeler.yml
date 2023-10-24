@@ -17,6 +17,8 @@ jobs:
         id: commit_messages
         run: |
           PR_NUMBER="${{ github.event.pull_request.number }}"
+          echo ${{ github.event.before }}
+          echo ${{ github.sha }}
           COMMIT_MESSAGES=$(git log --pretty=oneline ${{ github.event.before }}..${{ github.sha }} | cut -d' ' -f2-)
           echo "$COMMIT_MESSAGES" >> $GITHUB_OUTPUT
 
