@@ -53,7 +53,7 @@ jobs:
       - uses: octokit/request-action@v2.x
         id: add_pr_comment
         with:
-          route: POST /repos/:repository/issues/:issue_number/comments
+          route: POST /repos/:repository/issues/:issue_number/labels
           repository: ${{ github.repository }}
           issue_number: ${{ github.event.number }}
           body: ${{ steps.vars.outputs.body }}
