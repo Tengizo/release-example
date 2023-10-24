@@ -46,8 +46,5 @@ jobs:
           # Remove duplicates and convert labels to a comma-separated list
           LABELS=$(echo "$LABELS" | tr ' ' '\n' | sort -u | tr '\n' ',' | sed 's/,$//')
           echo "::set-output name=body::$LABELS"
-          LABELS2=
-          if [ -n "$LABELS" ]; then
-            echo "Adding labels '$LABELS' to PR #$PR_NUMBER"
-            curl -X POST -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/labels" -d "{\"labels\": [\"feature\"]}"
-          fi
+          echo "Adding labels '$LABELS' to PR #$PR_NUMBER"
+          curl -X POST -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/labels" -d "{\"labels\": [\"feature\"]}"
