@@ -27,29 +27,33 @@ jobs:
           PR_TITLE="${{ github.event.pull_request.title }}"
           PR_BODY="${{ github.event.pull_request.body }}"
           PR_TITLE=$(echo "$PR_TITLE" | tr '[:upper:]' '[:lower:]')
-          PR_BODY=$(echo "$PR_BODY" | tr '[:upper:]' '[:lower:]')          
+          PR_BODY=$(echo "$PR_BODY" | tr '[:upper:]' '[:lower:]')
+          
           echo "$PR_TITLE"
           echo "$PR_BODY"
-          
           labels=("feature" "fix" "refactor" "build" "docs" "chore")
           
-          MATCHED_LABELS=()
+          MATCHED_LABELS=""
           # Iterate over the array elements using a for loop
           for element in "${labels[@]}"; do
             if [[ $PR_TITLE == *"$element"* ]] || [[ $PR_BODY == *"$element"* ]]; then
-              MATCHED_LABELS+=("$element")
+              MATCHED_LABELS+="\"$element\","
               echo "The text contains the substring."
-              else
-              echo "The text does not contain the substring."
+            else
+             echo "The text does not contain the substring."
             fi
             echo "Element: $element"
           done
-            echo "Labels:"
-            echo "${MATCHED_LABELS[@]}"
-            
-          for element in "${MATCHED_LABELS[@]}"; do
-              echo "Adding labels '$element' to PR #$PR_NUMBER"
-              echo "Calling url 'https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/labels"
-              echo "With body {\"labels\": [\"$element\"]}"
-              curl -X POST -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/labels" -d "{\"labels\": [\"$element\"]}"
-          done
+          echo "Labels:"
+          MATCHED_LABELS="${MATCHED_LABELS%%,}"
+          echo "$MATCHED_LABELS"
+          BODY="{\"labels\": [$MATCHED_LABELS]}"
+          echo "$BODY"
+          echo "body=$BODY" >> $GITHUB_OUTPUT
+      - uses: octokit/request-action@v2.x
+        id: add_pr_comment
+        with:
+          route: POST /repos/:repository/issues/:issue_number/comments
+          repository: ${{ github.repository }}
+          issue_number: ${{ github.event.number }}
+          body: ${{ steps.vars.outputs.body }}
