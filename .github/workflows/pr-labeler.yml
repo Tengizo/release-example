@@ -17,6 +17,8 @@ jobs:
         id: commit_messages
         run: |
           PR_NUMBER="${{ github.event.pull_request.number }}"
+          echo ${{ github.event.before }}
+          echo ${{ github.sha }}
           COMMIT_MESSAGES=$(git log --pretty=oneline ${{ github.event.before }}..${{ github.sha }} | cut -d' ' -f2-)
           echo "$COMMIT_MESSAGES" >> $GITHUB_OUTPUT
 
@@ -50,12 +52,9 @@ jobs:
           LABELS="${LABELS%,}"
           
           GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
-          echo "$LABELS"
-          
-          for label in $(echo $LABELS | tr "," "\n")
-          do
-            echo "Adding label $label to PR #$PR_NUMBER"
-            curl -X POST -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/pull/$PR_NUMBER/labels" -d "{\"labels\": [\"$label\"]}"
-          done
+          echo "${LABELS}"
+
+          echo "Adding label $label to PR #$PR_NUMBER"
+          curl -X POST -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/labels" -d "{\"labels\": [\"feature\"]}"
         env:
           COMMIT_MESSAGES: ${{ steps.commit_messages.outputs.messages }}
