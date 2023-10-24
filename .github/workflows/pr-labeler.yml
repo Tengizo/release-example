@@ -1,13 +1,52 @@
-name: Community
+name: PR Labeler
+
 on:
-  pull_request_target:
-    types: [opened]
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
 jobs:
-  labeler:
+  add_labels:
     runs-on: ubuntu-latest
     steps:
-      - name: Check Labels
-        id: labeler
-        uses: jimschubert/labeler-action@v2
-        with:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Extract PR Title and Body
+        id: pr_info
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_BODY="${{ github.event.pull_request.body }}"
+          echo "::set-output name=title::$PR_TITLE"
+          echo "::set-output name=body::$PR_BODY"
+
+      - name: Add Labels
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_TITLE="${{ steps.pr_info.outputs.title }}"
+          PR_BODY="${{ steps.pr_info.outputs.body }"
+
+          # Define label patterns and corresponding labels
+          LABEL_PATTERNS=("bug:|fix:|error:" "feature:|enhancement:" "docs:")
+
+          LABELS=""
+          for pattern in "${LABEL_PATTERNS[@]}"; do
+            if echo "$PR_TITLE" | grep -qiE "$pattern"; then
+              LABELS+="$pattern"
+            fi
+            if echo "$PR_BODY" | grep -qiE "$pattern"; then
+              LABELS+="$pattern"
+            fi
+          done
+
+          GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+
+          # Remove duplicates and convert labels to a comma-separated list
+          LABELS=$(echo "$LABELS" | tr ' ' '\n' | sort -u | tr '\n' ',' | sed 's/,$//')
+
+          if [ -n "$LABELS" ]; then
+            echo "Adding labels '$LABELS' to PR #$PR_NUMBER"
+            curl -X POST -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/labels" -d "{\"labels\": [\"$LABELS\"]}"
+          fi
