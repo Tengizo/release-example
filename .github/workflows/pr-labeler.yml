@@ -26,7 +26,7 @@ jobs:
         run: |
           PR_NUMBER="${{ github.event.pull_request.number }}"
           PR_TITLE="${{ steps.pr_info.outputs.title }}"
-          PR_BODY="${{ steps.pr_info.outputs.body }"
+          PR_BODY="${{ steps.pr_info.outputs.body }}"
 
           # Define label patterns and corresponding labels
           LABEL_PATTERNS=("bug:|fix:|error:" "feature:|enhancement:" "docs:")
