@@ -57,3 +57,5 @@ jobs:
           repository: ${{ github.repository }}
           issue_number: ${{ github.event.number }}
           body: ${{ steps.vars.outputs.body }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
