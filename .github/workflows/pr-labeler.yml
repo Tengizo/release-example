@@ -51,13 +51,14 @@ jobs:
           echo "$BODY"
           echo "label_body=$BODY" >> $GITHUB_OUTPUT
           lb="${{ steps.vars.outputs.label_body }}"
+          echo "label body from output"
           echo "$lb"
-      - uses: octokit/request-action@v2.x
-        id: add_pr_label
+      - uses: actions/github-script@v6
         with:
-          route: POST /repos/:repository/issues/:issue_number/labels
-          repository: ${{ github.repository }}
-          issue_number: ${{ github.event.number }}
-          body: ${{ steps.vars.outputs.label_body }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['Triage']
+            })
