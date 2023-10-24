@@ -1,44 +1,25 @@
-# labeler "full" schema
+# labeler "simple" schema
+# Comment is applied to both issues and pull requests.
+# If you need a more robust solution, consider the "full" schema.
+comment: |
+  👍 Thanks for this!
+  🏷 I have applied any labels matching special text in your issue.
 
-# enable labeler on issues, prs, or both.
-enable:
-  issues: true
-  prs: true
-# comments object allows you to specify a different message for issues and prs
-
-comments:
-  issues: |
-    Thanks for opening this issue!
-    I have applied any labels matching special text in your title and description.
-
-    Please review the labels and make any necessary changes.
-  prs: |
-    Thanks for the contribution!
-    I have applied any labels matching special text in your title and description.
-
-    Please review the labels and make any necessary changes.
+  Please review the labels and make any necessary changes.
 
 # Labels is an object where:
 # - keys are labels
-# - values are objects of { include: [ pattern ], exclude: [ pattern ] }
-#    - pattern must be a valid regex, and is applied globally to
-#      title + description of issues and/or prs (see enabled config above)
-#    - 'include' patterns will associate a label if any of these patterns match
-#    - 'exclude' patterns will ignore this label if any of these patterns match
+# - values are array of string patterns to match against title + body in issues/prs
 labels:
-  'fix':
-    include:
-      - '\bbug[s]?\b'
-      - '\bfix[s]?\b'
-      - '\bfix[ed]?\b'
-    exclude: []
+  'bug':
+    - '\bfix[s]?\b'
+    - '\bbug[s]?\b'
   'feature':
-    include:
-      - '\bfeature?\b'
-      - '\bfeat?\b'
-    exclude:
-      - []
+    - '\bfeature?\b'
+  'duplicate':
+    - '\bduplicate\b'
+    - '\bdupe\b'
   'enhancement':
-    include:
-      - '\bfeat\b'
-    exclude: []
+    - '\benhancement\b'
+  'question':
+    - '\bquestion\b'
