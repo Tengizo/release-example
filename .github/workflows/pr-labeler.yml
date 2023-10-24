@@ -24,27 +24,30 @@ jobs:
 
       - name: Add Labels
         run: |
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          PR_TITLE="${{ steps.pr_info.outputs.title }}"
-          PR_BODY="${{ steps.pr_info.outputs.body }}"
-
+          PR_TITLE=$(echo "$PR_TITLE" | tr '[:upper:]' '[:lower:]')
+          PR_BODY=$(echo "$PR_BODY" | tr '[:upper:]' '[:lower:]')
           # Define label patterns and corresponding labels
-          LABEL_PATTERNS=("bug:|fix:|error:" "feature:|enhancement:" "docs:")
-
-          LABELS=""
-          for pattern in "${LABEL_PATTERNS[@]}"; do
-            if echo "$PR_TITLE" | grep -qiE "$pattern"; then
-              LABELS+="$pattern"
+          
+          echo "$PR_TITLE"
+          echo "$PR_BODY"
+          
+          labels=("feature" "fix" "refactor" "build" "docs" "chore")
+          
+          MATCHED_LABELS=()
+          # Iterate over the array elements using a for loop
+          for element in "${labels[@]}"; do
+            if [[ $PR_TITLE == *"$element"* ]] || [[ $PR_BODY == *"$element"* ]]; then
+              MATCHED_LABELS+=("$element")
+              echo "The text contains the substring."
+              else
+              echo "The text does not contain the substring."
             fi
-            if echo "$PR_BODY" | grep -qiE "$pattern"; then
-              LABELS+="$pattern"
-            fi
+            echo "Element: $element"
           done
-
-          GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
-
-          # Remove duplicates and convert labels to a comma-separated list
-          LABELS=$(echo "$LABELS" | tr ' ' '\n' | sort -u | tr '\n' ',' | sed 's/,$//')
-          echo "::set-output name=body::$LABELS"
-          echo "Adding labels '$LABELS' to PR #$PR_NUMBER"
-          curl -X POST -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/labels" -d "{\"labels\": [\"feature\"]}"
+            echo "Labels:"
+            echo "${MATCHED_LABELS[@]}"
+            
+          for element in "${MATCHED_LABELS[@]}"; do
+            echo "Adding labels '$element' to PR #$PR_NUMBER"
+            curl -X POST -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/labels" -d "{\"labels\": [\"$element\"]}"
+          done
