@@ -50,11 +50,12 @@ jobs:
           LABELS="${LABELS%,}"
           
           GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          echo "$LABELS"
           
           for label in $(echo $LABELS | tr "," "\n")
           do
             echo "Adding label $label to PR #$PR_NUMBER"
-            curl -X POST -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/labels" -d "{\"labels\": [\"$label\"]}"
+            curl -X POST -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/pull/$PR_NUMBER/labels" -d "{\"labels\": [\"$label\"]}"
           done
         env:
           COMMIT_MESSAGES: ${{ steps.commit_messages.outputs.messages }}
