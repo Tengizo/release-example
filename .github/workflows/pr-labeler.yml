@@ -50,8 +50,9 @@ jobs:
           BODY="{\"labels\": [$MATCHED_LABELS]}"
           echo "$BODY"
           echo "body=$BODY" >> $GITHUB_OUTPUT
+          echo "${{ steps.vars.outputs.body }}"
       - uses: octokit/request-action@v2.x
-        id: add_pr_comment
+        id: add_pr_label
         with:
           route: POST /repos/:repository/issues/:issue_number/labels
           repository: ${{ github.repository }}
