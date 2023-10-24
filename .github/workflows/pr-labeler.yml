@@ -18,7 +18,7 @@ jobs:
         run: |
           PR_NUMBER="${{ github.event.pull_request.number }}"
           COMMIT_MESSAGES=$(git log --pretty=oneline ${{ github.event.before }}..${{ github.sha }} | cut -d' ' -f2-)
-          echo "::set-output name=messages::$COMMIT_MESSAGES"
+          echo "$COMMIT_MESSAGES" >> $GITHUB_OUTPUT
 
       - name: Add Labels
         run: |
