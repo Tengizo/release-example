@@ -1,0 +1,60 @@
+name: Add Labels Based on Commit Messages
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  add_labels:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Extract Commit Messages
+        id: commit_messages
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          COMMIT_MESSAGES=$(git log --pretty=oneline ${{ github.event.before }}..${{ github.sha }} | cut -d' ' -f2-)
+          echo "::set-output name=messages::$COMMIT_MESSAGES"
+
+      - name: Add Labels
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          LABELS=""
+          
+          # Check commit messages for specific keywords or patterns and add labels accordingly
+          if echo "$COMMIT_MESSAGES" | grep -qi "fix"; then
+            LABELS+="fix,"
+          fi
+          
+          if echo "$COMMIT_MESSAGES" | grep -qi "feature"; then
+            LABELS+="feature,"
+          fi
+          
+          if echo "$COMMIT_MESSAGES" | grep -qi "docs"; then
+            LABELS+="docs,"
+          fi
+                    
+          if echo "$COMMIT_MESSAGES" | grep -qi "refactor"; then
+            LABELS+="refactor,"
+          fi
+                    
+          if echo "$COMMIT_MESSAGES" | grep -qi "chore"; then
+            LABELS+="chore,"
+          fi
+          
+          # Remove trailing comma from LABELS
+          LABELS="${LABELS%,}"
+          
+          GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          
+          for label in $(echo $LABELS | tr "," "\n")
+          do
+            echo "Adding label $label to PR #$PR_NUMBER"
+            curl -X POST -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/labels" -d "{\"labels\": [\"$label\"]}"
+          done
+        env:
+          COMMIT_MESSAGES: ${{ steps.commit_messages.outputs.messages }}
