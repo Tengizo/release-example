@@ -49,14 +49,15 @@ jobs:
           echo "$MATCHED_LABELS"
           BODY="{\"labels\": [$MATCHED_LABELS]}"
           echo "$BODY"
-          echo "body=$BODY" >> $GITHUB_OUTPUT
-          echo "${{ steps.vars.outputs.body }}"
+          echo "label_body=$BODY" >> $GITHUB_OUTPUT
+          lb= "${{ steps.vars.outputs.label_body }}"
+          echo "$lb"
       - uses: octokit/request-action@v2.x
         id: add_pr_label
         with:
           route: POST /repos/:repository/issues/:issue_number/labels
           repository: ${{ github.repository }}
           issue_number: ${{ github.event.number }}
-          body: ${{ steps.vars.outputs.body }}
+          body: ${{ steps.vars.outputs.label_body }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
