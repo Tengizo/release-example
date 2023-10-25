@@ -9,7 +9,7 @@ customLabels:
   - text: 'bug'
     label: 'fix'
   - text: 'fix'
-    label: 'bug'
+    label: 'fix'
   - text: 'feat'
     label: 'feat'
   - text: 'feat'
