@@ -23,7 +23,7 @@ jobs:
           RELEASE_NOTES=$(gh release view ${{ github.event.release.tag_name }} --repo ${{ github.repository }} --json body -q .body)
           echo "RELEASE_NOTES=$RELEASE_NOTES" >> $GITHUB_ENV
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Clone Central Repository
         run: git clone https://github.com/Tengizo/release-central.git
 
