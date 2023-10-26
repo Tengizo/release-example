@@ -24,11 +24,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Clone Central Repository
-        run: git clone https://github.com/Tengizo/release-central.git
+        run: git clone https://github.com/Tengizo/release-central.git release-central
 
       - name: Create and Push Release Notes
         run: |
-          cd notes
+          cd release-central
           mkdir -p ${{ github.repository }}
           RELEASE_NOTES=$(echo $RELEASE_NOTES | base64 --decode)
           echo "${{ env.RELEASE_NOTES }}" > ${{ github.repository }}/${{ github.event.release.tag_name }}
