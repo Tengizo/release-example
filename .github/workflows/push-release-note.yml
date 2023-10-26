@@ -18,9 +18,8 @@ jobs:
           git config --global user.email 'actions@github.com'
 
       - name: Fetch Release Notes
-        id: fetch-notes
         run: |
-          RELEASE_NOTES=$(gh release view ${{ github.event.release.tag_name }} --repo ${{ github.repository }} --json body -q .body)
+          RELEASE_NOTES=$(gh release view ${{ github.event.release.tag_name }} --repo ${{ github.repository }} --json body -q .body | base64)
           echo "RELEASE_NOTES=$RELEASE_NOTES" >> $GITHUB_ENV
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -31,9 +30,11 @@ jobs:
         run: |
           cd notes
           mkdir -p ${{ github.repository }}
+          RELEASE_NOTES=$(echo $RELEASE_NOTES | base64 --decode)
           echo "${{ env.RELEASE_NOTES }}" > ${{ github.repository }}/${{ github.event.release.tag_name }}
           git add .
           git commit -m "Add release notes for ${{ github.repository }}@${{ github.event.release.tag_name }}"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_NOTES: ${{ env.RELEASE_NOTES }}
