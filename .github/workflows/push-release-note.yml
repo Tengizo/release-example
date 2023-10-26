@@ -3,7 +3,7 @@ name: Fetch Release Notes
 on:
   release:
     types:
-      - created
+      - published
 
 jobs:
   fetch-and-push-notes:
