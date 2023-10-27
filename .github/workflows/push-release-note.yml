@@ -2,7 +2,7 @@ name: Fetch Release Notes
 
 on:
   release:
-    types: [published, edited]
+    types: [published]
 
 jobs:
   fetch-and-push-notes:
