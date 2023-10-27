@@ -23,6 +23,7 @@ jobs:
           REPO_NAME="${REPO_NAME##*/}"
           echo "*** 3 ****"
           mkdir -p $REPO_NAME
+          mkdir -p release-central/$REPO_NAME
           echo "*** 2 ****"
           MD_FILE=$REPO_NAME/${{ github.event.release.tag_name }}.md
           echo "*** 4 ****"
