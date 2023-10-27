@@ -34,7 +34,7 @@ jobs:
           destination-repository-name: 'release-central'
           target-directory: '${REPO_NAME}'
           user-email: chtengo@gmail.com
-          target-branch: main
+          target-branch: master
         env:
           API_TOKEN_GITHUB: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           REPO_NAME: ${{ env.REPO_NAME }}
