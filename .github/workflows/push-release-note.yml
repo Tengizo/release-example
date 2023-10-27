@@ -32,7 +32,7 @@ jobs:
           source-directory: 'release-notes'
           destination-github-username: 'Tengizo'
           destination-repository-name: 'release-central'
-          target-directory: $REPO_NAME
+          target-directory: ${{ env.REPO_NAME }}
           user-email: chtengo@gmail.com
           target-branch: master
         env:
