@@ -26,9 +26,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO_NAME: "${{ github.repository }}"
-
-      - name: Clone Central Repository
-        run: git clone https://github.com/Tengizo/release-central.git release-central
       - name: Pushes to another repository
         uses: cpina/github-action-push-to-another-repository@main
         with:
