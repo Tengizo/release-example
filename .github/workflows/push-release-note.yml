@@ -25,22 +25,22 @@ jobs:
           REPO_NAME="${REPO_NAME##*/}"
           mkdir -p $REPO_NAME
           gh release view ${{ github.event.release.tag_name }} --repo ${{ github.repository }} --json body -q .body > release-central/$REPO_NAME/release-notes-${{ github.event.release.tag_name }}.txt
-          echo "REPO_DIR=release-central/${REPO_NAME}" >> $GITHUB_ENV
+          echo "SOURCE_DIR=release-central/${REPO_NAME}" >> $GITHUB_ENV
+          echo "TARGET_DIR=${REPO_NAME}" >> $GITHUB_ENV
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO_NAME: "${{ github.repository }}"
       - name: Pushes to another repository
         uses: cpina/github-action-push-to-another-repository@main
         with:
-          source-directory: ${{ env.REPO_DIR }}
+          source-directory: ${{ env.SOURCE_DIR }}
           destination-github-username: 'Tengizo'
           destination-repository-name: 'release-central'
-          target-directory: ${{ env.REPO_DIR }}
+          target-directory: ${{ env.TARGET_DIR }}
           user-email: chtengo@gmail.com
           target-branch: master
         env:
           API_TOKEN_GITHUB: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          REPO_DIR: ${{ env.REPO_DIR }}
 #      - name: Create and Push Release Notes
 #        run: |
 #          cd release-central
