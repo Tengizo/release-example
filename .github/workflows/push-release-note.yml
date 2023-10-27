@@ -44,6 +44,7 @@ jobs:
           target-directory: ${{ env.TARGET_DIR }}
           user-email: chtengo@gmail.com
           target-branch: master
+          commit-message:  Add release notes ${{ github.event.release.tag_name }} for ORIGIN_COMMIT
         env:
           API_TOKEN_GITHUB: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 #      - name: Create and Push Release Notes
