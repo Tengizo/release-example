@@ -1,0 +1,27 @@
+# example
+name: Issue PR Labeler
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read       # required to read configuration yml file
+      issues: write        # required to add labels to issues
+      pull-requests: write # required to add labels to pull requests
+
+    steps:
+      - name: Run Issue PR Labeler
+        uses: hoho4190/issue-pr-labeler@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+#          disable-bot: true
+#          config-file-name: labeler-config.yml
